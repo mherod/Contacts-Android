@@ -35,10 +35,12 @@ public class ContactListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        contactTable = new ContactTable(getActivity());
+        Context context = getActivity();
+
+        contactTable = new ContactTable(context);
 
         contactListUpdateReceiver = new ContactListUpdateReceiver();
-        contactListAdapter = new ContactListAdapter(getActivity(), contactTable);
+        contactListAdapter = new ContactListAdapter(context, contactTable);
     }
 
     @Override

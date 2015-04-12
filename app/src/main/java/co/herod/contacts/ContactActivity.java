@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.EditText;
 
 
 public class ContactActivity extends ActionBarActivity {
@@ -13,18 +13,18 @@ public class ContactActivity extends ActionBarActivity {
 
     private Contact mContact;
 
-    private TextView mNameTextView;
-    private TextView mEmailTextView;
-    private TextView mTelTextView;
+    private EditText mNameEditText;
+    private EditText mEmailEditText;
+    private EditText mTelEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-        mNameTextView = (TextView) findViewById(R.id.contactNameTextView);
-        mEmailTextView = (TextView) findViewById(R.id.contactEmailTextView);
-        mTelTextView = (TextView) findViewById(R.id.contactTelTextView);
+        mNameEditText = (EditText) findViewById(R.id.contactNameEditText);
+        mEmailEditText = (EditText) findViewById(R.id.contactEmailEditText);
+        mTelEditText = (EditText) findViewById(R.id.contactTelEditText);
 
         contactTable = new ContactTable(this);
         contactTable.open();
@@ -32,11 +32,13 @@ public class ContactActivity extends ActionBarActivity {
         Bundle extras = getIntent().getExtras();
         int contactId = extras.getInt("contactid");
 
-        mContact = contactTable.getContact(contactId);
+        if (contactId > -1) {
+            mContact = contactTable.getContact(contactId);
 
-        mNameTextView.setText(mContact.getName());
-        mEmailTextView.setText(mContact.getEmail());
-        mTelTextView.setText(mContact.getTel());
+            mNameEditText.setText(mContact.getName());
+            mEmailEditText.setText(mContact.getEmail());
+            mTelEditText.setText(mContact.getTel());
+        }
 
     }
 
