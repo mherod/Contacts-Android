@@ -1,6 +1,7 @@
 package co.herod.contacts;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     private final ContactTable contactTable;
 
-    public ContactListAdapter(ContactTable contactTable) {
+    public ContactListAdapter(Context context, ContactTable contactTable) {
+        this.mContext = context;
         this.contactTable = contactTable;
     }
 
@@ -47,16 +49,18 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     @Override
     public void onBindViewHolder(final ViewHolder vh, int i) {
-        final Contact tweet = contactList.get(i);
+        final Contact contact = contactList.get(i);
+        final int contactId = contact.getId();
 
         vh.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mContext.startActivity(new Intent(mContext, ContactActivity.class)
+                        .putExtra("contactid", contactId));
             }
         });
 
-        vh.contactNameTextView.setText(tweet.getName());
+        vh.contactNameTextView.setText(contact.getName());
     }
 
     @Override
@@ -70,7 +74,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
         public ViewHolder(View v) {
             super(v);
-            contactNameTextView = (TextView) v.findViewById(R.id.contact_name_textview);
+            contactNameTextView = (TextView) v.findViewById(R.id.contactNameTextView);
         }
     }
 

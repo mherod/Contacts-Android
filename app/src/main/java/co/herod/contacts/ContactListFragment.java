@@ -38,9 +38,7 @@ public class ContactListFragment extends Fragment {
         contactTable = new ContactTable(getActivity());
 
         contactListUpdateReceiver = new ContactListUpdateReceiver();
-        contactListAdapter = new ContactListAdapter(contactTable);
-
-        // TODO: populate feed
+        contactListAdapter = new ContactListAdapter(getActivity(), contactTable);
     }
 
     @Override
@@ -73,6 +71,7 @@ public class ContactListFragment extends Fragment {
         Log.d(TAG, "onResume");
 
         contactTable.open();
+        contactTable.updateContact(new Contact("Matt", "matthew.herod@gmail.com", "123"));
         contactListAdapter.refresh();
 
         IntentFilter intentFilter = new IntentFilter("co.herod.contacts.LIST_UPDATE");

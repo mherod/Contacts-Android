@@ -58,6 +58,22 @@ public class ContactTable {
         return db.replace(TABLE, null, contact.exportContentValues());
     }
 
+    public Contact getContact(int id) {
+        Cursor cursor = db.query(
+                TABLE,
+                COLUMNS,
+                COLUMN_ID + "=?",
+                new String[] { String.valueOf(id) },
+                null,
+                null,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+
+        return new Contact(cursor);
+    }
+
     public List<Contact> getContactList() {
         Cursor cursor = db.query(
                 TABLE,

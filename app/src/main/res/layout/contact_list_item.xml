@@ -10,5 +10,5 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Contact Name"
-        android:id="@+id/contact_name_textview" />
+        android:id="@+id/contactNameTextView" />
 </LinearLayout>
