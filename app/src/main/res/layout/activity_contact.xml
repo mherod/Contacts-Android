@@ -14,7 +14,30 @@
         android:scaleType="centerCrop"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dp" />
+        android:layout_margin="20dp"
+        android:contentDescription="@string/contact_image" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/contactEmailImageButton"
+        android:src="@mipmap/ic_email"
+        android:scaleType="fitEnd"
+        android:layout_below="@+id/contactNameEditText"
+        android:layout_toLeftOf="@+id/imageView"
+        android:layout_toStartOf="@+id/imageView"
+        android:contentDescription="@string/email" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/contactTelImageButton"
+        android:src="@mipmap/ic_call"
+        android:scaleType="fitEnd"
+        android:layout_below="@+id/contactEmailImageButton"
+        android:layout_alignLeft="@+id/contactEmailImageButton"
+        android:layout_alignStart="@+id/contactEmailImageButton"
+        android:contentDescription="@string/phone" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -23,8 +46,7 @@
         android:ems="10"
         android:id="@+id/contactNameEditText"
         android:layout_below="@+id/imageView"
-        android:editable="true"
-        android:hint="Name"
+        android:hint="@string/name"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignLeft="@+id/imageView"
@@ -36,13 +58,10 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/contactEmailEditText"
-        android:layout_below="@+id/contactNameEditText"
+        android:hint="@string/email"
+        android:layout_above="@+id/contactTelEditText"
         android:layout_alignLeft="@+id/contactNameEditText"
-        android:layout_alignStart="@+id/contactNameEditText"
-        android:editable="true"
-        android:hint="Email"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignStart="@+id/contactNameEditText" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -50,33 +69,9 @@
         android:inputType="phone"
         android:ems="10"
         android:id="@+id/contactTelEditText"
-        android:layout_below="@+id/contactEmailEditText"
+        android:hint="@string/phone_number"
+        android:layout_alignTop="@+id/contactTelImageButton"
         android:layout_alignLeft="@+id/contactEmailEditText"
-        android:layout_alignStart="@+id/contactEmailEditText"
-        android:editable="true"
-        android:hint="Tel"
-        android:layout_alignRight="@+id/contactEmailEditText"
-        android:layout_alignEnd="@+id/contactEmailEditText" />
+        android:layout_alignStart="@+id/contactEmailEditText" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
-        android:layout_below="@+id/contactNameEditText"
-        android:layout_toLeftOf="@+id/imageView"
-        android:src="@drawable/person_image_empty"
-        android:layout_alignBottom="@+id/contactEmailEditText"
-        android:scaleType="fitEnd" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageButton2"
-        android:layout_alignTop="@+id/contactTelEditText"
-        android:layout_toLeftOf="@+id/imageView"
-        android:src="@drawable/person_image_empty"
-        android:layout_alignBottom="@+id/contactTelEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:scaleType="fitEnd" />
 </RelativeLayout>

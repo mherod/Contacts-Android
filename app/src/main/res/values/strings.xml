@@ -6,4 +6,9 @@
     <string name="title_activity_contact">Edit Contact</string>
 
     <string name="your_contacts">Your Contacts</string>
+    <string name="contact_image">Contact Image</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="phone_number">Phone number</string>
+    <string name="name">Name</string>
 </resources>
