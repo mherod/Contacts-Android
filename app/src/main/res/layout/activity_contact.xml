@@ -6,16 +6,29 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="co.herod.contacts.ContactActivity">
 
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/imageView"
+        android:src="@drawable/person_image_empty"
+        android:scaleType="centerCrop"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp" />
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:id="@+id/contactNameEditText"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/imageView"
+        android:editable="true"
+        android:hint="Name"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignLeft="@+id/imageView"
+        android:layout_alignStart="@+id/imageView" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -24,8 +37,12 @@
         android:ems="10"
         android:id="@+id/contactEmailEditText"
         android:layout_below="@+id/contactNameEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignLeft="@+id/contactNameEditText"
+        android:layout_alignStart="@+id/contactNameEditText"
+        android:editable="true"
+        android:hint="Email"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -34,16 +51,32 @@
         android:ems="10"
         android:id="@+id/contactTelEditText"
         android:layout_below="@+id/contactEmailEditText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignLeft="@+id/contactEmailEditText"
+        android:layout_alignStart="@+id/contactEmailEditText"
+        android:editable="true"
+        android:hint="Tel"
+        android:layout_alignRight="@+id/contactEmailEditText"
+        android:layout_alignEnd="@+id/contactEmailEditText" />
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/imageView"
-        android:src="@android:drawable/presence_online"
-        android:scaleType="centerCrop"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton"
+        android:layout_below="@+id/contactNameEditText"
+        android:layout_toLeftOf="@+id/imageView"
+        android:src="@drawable/person_image_empty"
+        android:layout_alignBottom="@+id/contactEmailEditText"
+        android:scaleType="fitEnd" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton2"
+        android:layout_alignTop="@+id/contactTelEditText"
+        android:layout_toLeftOf="@+id/imageView"
+        android:src="@drawable/person_image_empty"
+        android:layout_alignBottom="@+id/contactTelEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:scaleType="fitEnd" />
 </RelativeLayout>
