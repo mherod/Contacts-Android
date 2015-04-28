@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="co.herod.contacts.ContactActivity">
 
-    <item android:id="@+id/action_contact_save" android:title="Save"
-        android:orderInCategory="100" app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_contact_delete" android:title="Delete"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item
+        android:id="@+id/action_contact_save"
+        android:title="Save"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_contact_delete"
+        android:title="Delete"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
 </menu>

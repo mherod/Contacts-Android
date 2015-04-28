@@ -2,6 +2,7 @@ package co.herod.contacts;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 
 import java.io.Serializable;
 
@@ -11,9 +12,15 @@ import java.io.Serializable;
 public class Contact implements Serializable {
 
     private int id;
-    private String name;
-    private String email;
-    private String tel;
+    private String name = null;
+    private String email = null;
+    private String tel = null;
+    private String imgUriString = null;
+
+    private boolean editedName = false;
+    private boolean editedEmail = false;
+    private boolean editedTel = false;
+    private boolean editedImgUri = false;
 
     public Contact() {
 
@@ -23,6 +30,9 @@ public class Contact implements Serializable {
         this.name = name;
         this.email = email;
         this.tel = tel;
+        editedName = true;
+        editedEmail = true;
+        editedTel = true;
     }
 
     public Contact(Cursor cursor) {
@@ -36,28 +46,68 @@ public class Contact implements Serializable {
         return id;
     }
 
-    public String getName() {
+    public CharSequence getName() {
         return name;
     }
 
-    public String getEmail() {
+    public CharSequence getEmail() {
         return email;
     }
 
-    public String getTel() {
+    public CharSequence getTel() {
         return tel;
+    } // TODO: validation
+
+    public void setName(String name) {
+        this.editedName = !this.name.equals(name);
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.editedEmail = !this.email.equals(email);
+        this.email = email;
+    }
+
+    public void setTel(String tel) {
+        this.editedTel = !this.tel.equals(tel);
+        this.tel = tel;
+    }
+
+    public void setImgUri(Uri uri) {
+        setImgUriString(uri.toString());
+    }
+
+    public void setImgUriString(String imgUriString) {
+        this.editedImgUri = !this.imgUriString.equals(imgUriString);
+        this.imgUriString = imgUriString;
     }
 
     public ContentValues exportContentValues() {
         ContentValues contentValues = new ContentValues();
-        if (id > -1) {
+        /* if (id > -1) {
             // without an assigned id we expect the database will assign one
             contentValues.put(ContactTable.COLUMN_ID, id);
+        } */
+        if (editedName) {
+            contentValues.put(ContactTable.COLUMN_NAME, name);
         }
-        contentValues.put(ContactTable.COLUMN_NAME, name);
-        contentValues.put(ContactTable.COLUMN_EMAIL, email);
-        contentValues.put(ContactTable.COLUMN_TEL, tel);
+        if (editedEmail) {
+            contentValues.put(ContactTable.COLUMN_EMAIL, email);
+        }
+        if (editedTel) {
+            contentValues.put(ContactTable.COLUMN_TEL, tel);
+        }
+        if (editedImgUri) {
+            contentValues.put(ContactTable.COLUMN_IMGURI, imgUriString);
+        }
         return contentValues;
+    }
+
+    public void resetEditFlags() {
+        editedName = false;
+        editedEmail = false;
+        editedTel = false;
+        editedImgUri = false;
     }
 
 }

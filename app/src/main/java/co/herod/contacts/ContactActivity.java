@@ -1,12 +1,16 @@
 package co.herod.contacts;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,12 +20,10 @@ import android.widget.Toast;
 
 public class ContactActivity extends AppCompatActivity {
 
-    private ContactTable contactTable;
+    private Uri contactDirUri = ContactProvider.CONTACT_URI; // Default Contacts Directory
+    private Uri contactUri = null;
 
-    private long contactId;
     private boolean unsavedChanges = false;
-
-    private Contact mContact;
 
     private EditText mNameEditText;
     private EditText mEmailEditText;
@@ -36,26 +38,23 @@ public class ContactActivity extends AppCompatActivity {
         mEmailEditText = (EditText) findViewById(R.id.contactEmailEditText);
         mTelEditText = (EditText) findViewById(R.id.contactTelEditText);
 
-        contactTable = new ContactTable(this);
-        contactTable.open();
 
-        Bundle extras = getIntent().getExtras();
-        contactId = extras.getInt("contactid");
+        Uri dataUri = getIntent().getData();
+        if (dataUri != null) {
+            contactUri = dataUri;
+        }
+        if (contactUri != null) {
+            Cursor c = getContentResolver()
+                    .query(ContactProvider.CONTACT_URI, ContactTable.COLUMNS,
+                            null, null, null);
 
-        if (contactId > -1) {
-            mContact = contactTable.getContact(contactId);
-
-            mNameEditText.setText(mContact.getName());
-            mEmailEditText.setText(mContact.getEmail());
-            mTelEditText.setText(mContact.getTel());
-        } else {
-            mContact = new Contact();
+            importContactFromCursor(c);
         }
 
-        EditText[] editTexts = new EditText[] {mNameEditText, mEmailEditText, mTelEditText};
-        for (EditText editText : editTexts) {
-            editText.addTextChangedListener(editTextWatcher);
-        }
+        mNameEditText.addTextChangedListener(fieldTextWatcher);
+        mEmailEditText.addTextChangedListener(fieldTextWatcher);
+        mTelEditText.addTextChangedListener(fieldTextWatcher);
+
     }
 
     @Override
@@ -63,15 +62,13 @@ public class ContactActivity extends AppCompatActivity {
         super.onStop();
         if (unsavedChanges) {
             Toast.makeText(this, getString(R.string.msg_discard_without_save), Toast.LENGTH_SHORT)
-                .show();
+                    .show();
         }
-        contactTable.close();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // catches back button press
             if (unsavedChanges) {
                 blockBackButton();
                 return true;
@@ -82,7 +79,6 @@ public class ContactActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_contact, menu);
         return true;
     }
@@ -90,21 +86,47 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.action_contact_save) {
-            actionSave();
-            return true;
+        switch(id) {
+            case android.R.id.home:
+                if (unsavedChanges) {
+                    blockBackButton();
+                    return true;
+                }
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.action_contact_save:
+                actionSave();
+                finish();
+                return true;
+            case R.id.action_contact_delete:
+                actionDelete();
+                finish();
+                return true;
         }
-        if (id == R.id.action_contact_delete) {
-            actionDelete();
-            return true;
-        }
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void importContactFromCursor(Cursor cursor) {
+
+        cursor.moveToFirst();
+
+        String name = cursor.getString(cursor.getColumnIndex(ContactTable.COLUMN_NAME));
+        String email = cursor.getString(cursor.getColumnIndex(ContactTable.COLUMN_EMAIL));
+        String tel = cursor.getString(cursor.getColumnIndex(ContactTable.COLUMN_TEL));
+
+        mNameEditText.setText(name);
+        mEmailEditText.setText(email);
+        mTelEditText.setText(tel);
+    }
+
+    public ContentValues exportContentValues(boolean all) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ContactTable.COLUMN_NAME, mNameEditText.getText().toString());
+        contentValues.put(ContactTable.COLUMN_EMAIL, mEmailEditText.getText().toString());
+        contentValues.put(ContactTable.COLUMN_TEL, mTelEditText.getText().toString());
+        // contentValues.put(ContactTable.COLUMN_IMGURI, imgUriString);
+
+        return contentValues;
     }
 
     private void actionSave() {
@@ -113,25 +135,23 @@ public class ContactActivity extends AppCompatActivity {
                     .show();
             return;
         }
-        if (mContact != null) {
-            contactId = contactTable.updateContact(mContact);
-            unsavedChanges = false;
-            Toast.makeText(this, getString(R.string.msg_contact_saved), Toast.LENGTH_SHORT)
-                    .show();
-            return;
+        ContentResolver contentResolver = getContentResolver();
+        if (contactUri == null) {
+            contactUri = contentResolver.insert(contactDirUri, exportContentValues(true));
+        } else {
+            contentResolver.update(contactUri, exportContentValues(false), null, null);
         }
+        unsavedChanges = false;
+        Toast.makeText(this, getString(R.string.msg_contact_saved), Toast.LENGTH_SHORT)
+                .show();
     }
 
     private void actionDelete() {
-        if (contactId > -1) {
-            contactTable.deleteContact(contactId);
+        if (contactUri != null) {
+            getContentResolver().delete(contactUri, null, null);
             Toast.makeText(this, getString(R.string.msg_contact_deleted), Toast.LENGTH_SHORT)
                     .show();
-        } else {
-            Toast.makeText(this, getString(R.string.msg_discard_without_save), Toast.LENGTH_SHORT)
-                    .show();
         }
-        finish();
     }
 
     private void blockBackButton() {
@@ -154,21 +174,18 @@ public class ContactActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private TextWatcher editTextWatcher = new TextWatcher() {
+    public TextWatcher fieldTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
         }
 
         @Override
         public void afterTextChanged(Editable s) {
             unsavedChanges = true;
-            Log.d("ContactActivity", "Marked unsaved changes!");
         }
     };
 
