@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,7 @@ import android.widget.Toast;
 
 public class ContactActivity extends AppCompatActivity {
 
-    private Uri contactDirUri = ContactProvider.CONTACT_URI; // Default Contacts Directory
+    private Uri contactDirUri = ContactProviderContract.Contact.DIR_URI; // Default Contacts Directory
     private Uri contactUri = null;
 
     private boolean unsavedChanges = false;
@@ -42,11 +43,11 @@ public class ContactActivity extends AppCompatActivity {
         Uri dataUri = getIntent().getData();
         if (dataUri != null) {
             contactUri = dataUri;
+            Log.d("ContactActivity", "Loading contact uri: " + contactUri);
         }
         if (contactUri != null) {
             Cursor c = getContentResolver()
-                    .query(ContactProvider.CONTACT_URI, ContactTable.COLUMNS,
-                            null, null, null);
+                    .query(contactUri, ContactProviderContract.Contact.COLUMNS, null, null, null);
 
             importContactFromCursor(c);
         }
@@ -86,7 +87,7 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch(id) {
+        switch (id) {
             case android.R.id.home:
                 if (unsavedChanges) {
                     blockBackButton();
@@ -107,12 +108,14 @@ public class ContactActivity extends AppCompatActivity {
     }
 
     private void importContactFromCursor(Cursor cursor) {
-
         cursor.moveToFirst();
 
-        String name = cursor.getString(cursor.getColumnIndex(ContactTable.COLUMN_NAME));
-        String email = cursor.getString(cursor.getColumnIndex(ContactTable.COLUMN_EMAIL));
-        String tel = cursor.getString(cursor.getColumnIndex(ContactTable.COLUMN_TEL));
+        String name = cursor.getString(
+                cursor.getColumnIndex(ContactProviderContract.Contact.KEY_NAME));
+        String email = cursor.getString(
+                cursor.getColumnIndex(ContactProviderContract.Contact.KEY_EMAIL));
+        String tel = cursor.getString(
+                cursor.getColumnIndex(ContactProviderContract.Contact.KEY_TEL));
 
         mNameEditText.setText(name);
         mEmailEditText.setText(email);
@@ -121,10 +124,10 @@ public class ContactActivity extends AppCompatActivity {
 
     public ContentValues exportContentValues(boolean all) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ContactTable.COLUMN_NAME, mNameEditText.getText().toString());
-        contentValues.put(ContactTable.COLUMN_EMAIL, mEmailEditText.getText().toString());
-        contentValues.put(ContactTable.COLUMN_TEL, mTelEditText.getText().toString());
-        // contentValues.put(ContactTable.COLUMN_IMGURI, imgUriString);
+        contentValues.put(ContactProviderContract.Contact.KEY_NAME, mNameEditText.getText().toString());
+        contentValues.put(ContactProviderContract.Contact.KEY_EMAIL, mEmailEditText.getText().toString());
+        contentValues.put(ContactProviderContract.Contact.KEY_TEL, mTelEditText.getText().toString());
+        // contentValues.put(ContactTable.KEY_IMGURI, imgUriString);
 
         return contentValues;
     }

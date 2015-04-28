@@ -14,20 +14,13 @@ public class ContactProvider extends ContentProvider {
 
     private static final UriMatcher uriMatcher;
 
-    public static final String AUTHORITY = "co.herod.contacts.ContactProvider";
-
-    public static final Uri CONTACT_URI = Uri.parse("content://" + AUTHORITY + "/contacts");
-
-    public static final String CONTENT_TYPE_MULTIPLE = "vnd.android.cursor.dir/ContactProvider.data.text";
-    public static final String CONTENT_TYPE_SINGLE = "vnd.android.cursor.item/ContactProvider.data.text";
-
     public static final int CONTACTS = 1;
     public static final int CONTACTS_ID = 2;
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, "contacts", CONTACTS);
-        uriMatcher.addURI(AUTHORITY, "contacts/#", CONTACTS_ID);
+        uriMatcher.addURI(ContactProviderContract.AUTHORITY, "contacts", CONTACTS);
+        uriMatcher.addURI(ContactProviderContract.AUTHORITY, "contacts/#", CONTACTS_ID);
     }
 
     public ContactProvider() {
@@ -43,9 +36,9 @@ public class ContactProvider extends ContentProvider {
     public String getType(Uri uri) {
         switch (uriMatcher.match(uri)) {
             case CONTACTS:
-                return "vnd.android.cursor.dir/vnd.example.friends";
+                return ContactProviderContract.Contact.CONTENT_TYPE_MULTIPLE;
             case CONTACTS_ID:
-                return "vnd.android.cursor.item/vnd.example.friends";
+                return ContactProviderContract.Contact.CONTENT_TYPE_SINGLE;
             default:
                 throw new IllegalArgumentException("unsupported " + uri);
         }
@@ -57,7 +50,7 @@ public class ContactProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case CONTACTS:
                 return db.query(
-                        ContactTable.TABLE,
+                        ContactProviderContract.Contact.TABLE,
                         projection,
                         selection,
                         selectionArgs,
@@ -68,9 +61,9 @@ public class ContactProvider extends ContentProvider {
                 );
             case CONTACTS_ID:
                 return db.query(
-                        ContactTable.TABLE,
+                        ContactProviderContract.Contact.TABLE,
                         projection,
-                        ContactTable.COLUMN_ID + "=?",
+                        ContactProviderContract.Contact.KEY_ID + "=?",
                         new String[]{uri.getLastPathSegment()},
                         null,
                         null,
@@ -89,13 +82,13 @@ public class ContactProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case CONTACTS:
             case CONTACTS_ID:
-                id = db.insert(ContactTable.TABLE, null, values);
+                id = db.insert(ContactProviderContract.Contact.TABLE, null, values);
                 break;
             default:
                 throw new IllegalArgumentException("unsupported " + uri);
         }
         db.close();
-        return ContentUris.withAppendedId(CONTACT_URI, id);
+        return ContentUris.withAppendedId(ContactProviderContract.Contact.DIR_URI, id);
     }
 
     @Override
@@ -105,8 +98,8 @@ public class ContactProvider extends ContentProvider {
         int i;
         switch (uriMatcher.match(uri)) {
             case CONTACTS_ID:
-                i = db.update(ContactTable.TABLE,
-                        values, ContactTable.COLUMN_ID + "=?",
+                i = db.update(ContactProviderContract.Contact.TABLE,
+                        values, ContactProviderContract.Contact.KEY_ID + "=?",
                         new String[]{uri.getLastPathSegment()});
                 break;
             default:
@@ -123,8 +116,8 @@ public class ContactProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case CONTACTS_ID:
                 i = db.delete(
-                        ContactTable.TABLE,
-                        ContactTable.COLUMN_ID + "=?",
+                        ContactProviderContract.Contact.TABLE,
+                        ContactProviderContract.Contact.KEY_ID + "=?",
                         new String[]{uri.getLastPathSegment()}
                 );
                 break;

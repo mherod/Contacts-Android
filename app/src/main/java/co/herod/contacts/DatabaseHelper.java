@@ -11,16 +11,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String TAG = DatabaseHelper.class.getSimpleName();
 
-    private static final String DATABASE_NAME = "contacts.db";
-    private static final int DATABASE_VERSION = 1;
-
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context,
+                ContactProviderContract.DATABASE_NAME,
+                null,
+                ContactProviderContract.DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        database.execSQL(ContactTable.SQL_CREATE);
+        database.execSQL(ContactProviderContract.Contact.SQL_TABLE_CREATE);
     }
 
     /**
@@ -33,8 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Version 1 - no necessary update process
-        db.execSQL("DROP FEED_TABLE IF EXISTS " + ContactTable.TABLE);
+        db.execSQL(ContactProviderContract.Contact.SQL_TABLE_DELETE);
         onCreate(db);
     }
 
