@@ -58,7 +58,11 @@ public class ContactTable {
         return db.replace(TABLE, null, contact.exportContentValues());
     }
 
-    public Contact getContact(int id) {
+    public void deleteContact(long contactId) {
+        db.delete(TABLE, COLUMN_ID + "=?", new String[]{String.valueOf(contactId)});
+    }
+
+    public Contact getContact(long id) {
         Cursor cursor = db.query(
                 TABLE,
                 COLUMNS,

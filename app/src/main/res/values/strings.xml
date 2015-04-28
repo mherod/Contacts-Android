@@ -11,4 +11,9 @@
     <string name="phone">Phone</string>
     <string name="phone_number">Phone number</string>
     <string name="name">Name</string>
+
+    <string name="msg_no_unsaved">Nothing to save!</string>
+    <string name="msg_discard_without_save">Discarded contact changes!</string>
+    <string name="msg_contact_deleted">Contact deleted!</string>
+    <string name="msg_contact_saved">Contact saved!</string>
 </resources>

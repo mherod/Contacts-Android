@@ -5,27 +5,37 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class ContactListFragment extends Fragment {
 
     public static final String TAG = ContactListFragment.class.getSimpleName();
 
-    private RecyclerView recyclerView;
+    public static final int CONTACT_LOADER_ID = 10;
+
+    private ListView contactListView;
 
     private ContactTable contactTable;
 
     private ContactListUpdateReceiver contactListUpdateReceiver;
 
     private ContactListAdapter contactListAdapter;
+
+
+    private SimpleCursorAdapter adapter;
 
     public ContactListFragment() {
         // Required empty public constructor
@@ -41,6 +51,11 @@ public class ContactListFragment extends Fragment {
 
         contactListUpdateReceiver = new ContactListUpdateReceiver();
         contactListAdapter = new ContactListAdapter(context, contactTable);
+
+        setupCursorAdapter();
+
+        getActivity().getSupportLoaderManager().initLoader(CONTACT_LOADER_ID,
+                new Bundle(), contactsLoader);
     }
 
     @Override
@@ -49,12 +64,13 @@ public class ContactListFragment extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.contact_list_recycler);
+        contactListView = (ListView) view.findViewById(R.id.contactsListView);
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // contactListView.setHasFixedSize(true);
+        // contactListView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        recyclerView.setAdapter(contactListAdapter);
+        // contactListView.setAdapter(contactListAdapter);
+        contactListView.setAdapter(adapter);
 
         return view;
     }
@@ -108,6 +124,53 @@ public class ContactListFragment extends Fragment {
 
         Log.d(TAG, "onDetach");
     }
+
+    private void setupCursorAdapter() {
+        String[] uiBindFrom = {ContactsContract.Contacts.DISPLAY_NAME,
+                ContactsContract.Contacts.PHOTO_URI};
+        int[] uiBindTo = {R.id.contactNameEditText, R.id.contactPicImageView};
+        adapter = new SimpleCursorAdapter(getActivity(), R.layout.contact_list_item,
+                null, uiBindFrom, uiBindTo, 0);
+    }
+
+    private LoaderManager.LoaderCallbacks<Cursor> contactsLoader =
+            new LoaderManager.LoaderCallbacks<Cursor>() {
+                // Create and return the actual cursor loader for the contacts data
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    // Define the columns to retrieve
+                    String[] projectionFields =  new String[] { ContactsContract.Contacts._ID,
+                            ContactsContract.Contacts.DISPLAY_NAME,
+                            ContactsContract.Contacts.PHOTO_URI };
+                    // Construct the loader
+                    CursorLoader cursorLoader = new CursorLoader(getActivity(),
+                            ContactsContract.Contacts.CONTENT_URI, // URI
+                            projectionFields,  // projection fields
+                            null, // the selection criteria
+                            null, // the selection args
+                            null // the sort order
+                    );
+                    // Return the loader for use
+                    return cursorLoader;
+                }
+
+                // When the system finishes retrieving the Cursor through the CursorLoader,
+                // a call to the onLoadFinished() method takes place.
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                    // The swapCursor() method assigns the new Cursor to the adapter
+                    adapter.swapCursor(cursor);
+                }
+
+                // This method is triggered when the loader is being reset
+                // and the loader data is no longer available. Called if the data
+                // in the provider changes and the Cursor becomes stale.
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+                    // Clear the Cursor we were using with another call to the swapCursor()
+                    adapter.swapCursor(null);
+                }
+            };
 
     /**
      * Listener for broadcasts to service - only used for stopwatch resets
