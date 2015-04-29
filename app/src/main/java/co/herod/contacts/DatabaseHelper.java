@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final String TAG = DatabaseHelper.class.getSimpleName();
-
     public DatabaseHelper(Context context) {
         super(context,
                 ContactProviderContract.DATABASE_NAME,

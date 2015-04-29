@@ -3,6 +3,7 @@ package co.herod.contacts;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -26,7 +27,7 @@ public class ContactListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String[] bindFields = {ContactTable.COLUMN_NAME};
+        String[] bindFields = {ContactProviderContract.Contact.KEY_NAME};
         int[] bindRes = {R.id.contactNameTextView};
 
         contactListAdapter = new SimpleCursorAdapter(getActivity(), R.layout.contact_list_item,
@@ -44,10 +45,9 @@ public class ContactListFragment extends Fragment {
         contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                contactListView.getItemAtPosition(position);
-
+                Uri uri = ContentUris.withAppendedId(ContactProviderContract.Contact.DIR_URI, id);
                 Intent intent = new Intent(getActivity(), ContactActivity.class);
-                intent.setData(ContentUris.withAppendedId(ContactProvider.CONTACT_URI, id));
+                intent.setData(uri);
                 startActivity(intent);
             }
         });
@@ -60,7 +60,8 @@ public class ContactListFragment extends Fragment {
 
         Cursor contactListCursor = getActivity()
                 .getContentResolver()
-                .query(ContactProvider.CONTACT_URI, ContactTable.COLUMNS,
+                .query(ContactProviderContract.Contact.DIR_URI,
+                        ContactProviderContract.Contact.KEYS,
                         null, null, null);
 
         contactListAdapter.swapCursor(contactListCursor);

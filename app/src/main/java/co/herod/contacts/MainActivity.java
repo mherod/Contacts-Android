@@ -13,10 +13,12 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
-
+/**
+ * Created by Matthew Herod
+ */
 public class MainActivity extends AppCompatActivity {
 
-    SectionsPagerAdapter mSectionsPagerAdapter;
+    SectionsPagerAdapter mSectionsPagerAdapter; // TODO: starred contacts tab
 
     ViewPager mViewPager;
 

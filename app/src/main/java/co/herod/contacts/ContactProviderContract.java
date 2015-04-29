@@ -25,7 +25,7 @@ public final class ContactProviderContract {
         public static final String KEY_EMAIL = "email";
         public static final String KEY_IMGURI = "img_uri";
 
-        public static final String[] COLUMNS = {
+        public static final String[] KEYS = {
                 KEY_ID,
                 KEY_NAME,
                 KEY_TEL,
